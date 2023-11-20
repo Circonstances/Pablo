@@ -17,7 +17,7 @@ public class TestNoGIT {
 		TouchSensor touch = new TouchSensor(SensorPort.S1);
 		MoteurPinces pinces = new MoteurPinces();
 		MoteurRoues roues = new MoteurRoues("best");
-		Button.ENTER.waitForPress();
+		System.out.println("Hello");
 	}
 
 	public static void main(String[] args) {
