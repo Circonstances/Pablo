@@ -31,7 +31,7 @@ public class Main {
 			Button.ENTER.waitForPressAndRelease();
 			switch(etat) {
 			case Debut :
-					roues.setVitesse("rapide");
+				roues.setVitesse("rapide");
 				roues.avancerF(500);
 				pinces.fermeture();
 				roues.tourner(80.5, false);
@@ -48,13 +48,34 @@ public class Main {
 				etat = Etat.RecherchePalet;
 
 			case RecherchePalet:
-					
+	
 				// tourne sur lui même pour chercher un palet, quand détecte passe à l'état d'après
-			case RamenerPalet:
-				// trouve quelle bande blanche il veut dépasser (besoin de savoir sa position)
-				// lacher le pallet , reculer et se tourner vers le mur le plus loin, avance jusq'uà dépasser la ligne blanche
+				
 			case PrendrePalet:
 				// tourne de l'angle, avance vers le palet de d, s'arrête quand touch true & ferme pince
+				
+			case RamenerPalet: 
+			if(touchS.isPressed()==true){
+				pinces.fermeture();
+				roues.tourner(-boussolle*0.494,false);
+				roues.setVitesse("rapide");
+				roues.avancerT(10000);
+				while (ultrasonic.distance()>20);
+				roues.stop();
+				pinces.ouverture();
+				roues.reculer(200);
+				roues.tourner(161, false);
+				etat = Etat.RecherchePalet;
+			}
+			else {
+				etat=Etat.RecherchePalet;
+			}
+			
+		
+				
+				// trouve quelle bande blanche il veut dépasser (besoin de savoir sa position)
+				// lacher le pallet , reculer et se tourner vers le mur le plus loin, avance jusq'uà dépasser la ligne blanche
+			
 			case Pause:
 
 			case Fin:
