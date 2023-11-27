@@ -66,7 +66,13 @@ public class Main {
 				etat = Etat.PrendrePalet;
 
 			case PrendrePalet:
-
+				int dis=(int) ultrasonic.distance();
+				while (touchS.isPressed()==false && dis<(int) ultrasonic.distance()) {
+					roues.avancerT(10);
+					dis =(int) ultrasonic.distance();
+				}
+				etat=Etat.PrendrePalet;
+				
 			case RamenerPalet: 
 				if(touchS.isPressed()==true){
 					pinces.fermeture();
