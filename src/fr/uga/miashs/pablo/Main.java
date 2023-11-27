@@ -13,6 +13,8 @@ import lejos.utility.Delay;
 public class Main {
 
 	private static int boussolle;
+	private final static int MAX_DISTANCE = 2147483647;
+	private static int nb_palets;
 
 	public enum Etat {
 		Debut,
@@ -23,9 +25,9 @@ public class Main {
 		Fin
 	}
 
-		public static void run(MoteurRoues roues, MoteurPinces pinces, TouchSensor touchS, UltraSonicSensor ultrasonic) {
+	public static void run(MoteurRoues roues, MoteurPinces pinces, TouchSensor touchS, UltraSonicSensor ultrasonic) {
 
-			Etat etat = Etat.Debut;
+		Etat etat = Etat.Debut;
 
 		while(true) {
 			Button.ENTER.waitForPressAndRelease();
@@ -45,44 +47,55 @@ public class Main {
 				pinces.ouverture();
 				roues.reculer(200);
 				roues.tourner(161, false);
+				boussolle += 180;
 				etat = Etat.RecherchePalet;
 
 			case RecherchePalet:
-	
-				// tourne sur lui même pour chercher un palet, quand détecte passe à l'état d'après
-				
-			case PrendrePalet:
-				// tourne de l'angle, avance vers le palet de d, s'arrête quand touch true & ferme pince
-				
-			case RamenerPalet: 
-			if(touchS.isPressed()==true){
-				pinces.fermeture();
-				roues.tourner(-boussolle*0.494,false);
-				roues.setVitesse("rapide");
-				roues.avancerT(10000);
-				while (ultrasonic.distance()>20);
+				roues.setVitesse("tour");
+				roues.tourner(342, true);
+				int dist = (int) ultrasonic.distance();
+				Delay.msDelay(20);
+				while (dist-ultrasonic.distance()<dist*0.9  && dist!=MAX_DISTANCE) {
+					boussolle += 2;
+					System.out.print("tjr pas, ");
+					Delay.msDelay(20);
+					dist = (int) ultrasonic.distance();
+				}
 				roues.stop();
-				pinces.ouverture();
-				roues.reculer(200);
-				roues.tourner(161, false);
-				etat = Etat.RecherchePalet;
-			}
-			else {
-				etat=Etat.RecherchePalet;
-			}
-			
-		
-				
+				boussolle = boussolle%360;
+				etat = Etat.PrendrePalet;
+
+			case PrendrePalet:
+
+			case RamenerPalet: 
+				if(touchS.isPressed()==true){
+					pinces.fermeture();
+					roues.tourner(-boussolle*0.94,false);
+					roues.setVitesse("rapide");
+					roues.avancerT(10000);
+					while (ultrasonic.distance()>20);
+					roues.stop();
+					pinces.ouverture();
+					roues.reculer(200);
+					roues.tourner(161, false);
+					etat = Etat.RecherchePalet;
+				}
+				else {
+					etat=Etat.RecherchePalet;
+				}
+
+
+
 				// trouve quelle bande blanche il veut dépasser (besoin de savoir sa position)
 				// lacher le pallet , reculer et se tourner vers le mur le plus loin, avance jusq'uà dépasser la ligne blanche
-			
+
 			case Pause:
 
 			case Fin:
 			}
 		}
 
-		}
+	}
 
 
 
@@ -91,35 +104,72 @@ public class Main {
 	}
 
 
-	public static int[] tourSurSoitM(MoteurRoues r, UltraSonicSensor s) {
-		r.setVitesse("tour");
-		r.tourner(-360 ,true); //tour sur soit même 
-		int tab [] = new int [200];
-		Delay.msDelay(65);
-		for (int i= 0 ; i < tab.length ; i++) { 
-			tab[i] = (int)s.distance(); 
-			Delay.msDelay(7);
+	public boolean tourJusqua(MoteurRoues roues, UltraSonicSensor ultrasonic, char sens) {
+		    float valeurActuelle = ultrasonic.distance(); // valeurActuelle comme "valeur ancienne"
+		    Delay.msDelay(20);
+		    float valeurRecente = ultrasonic.distance(); // valeurRecente comme "valeur récente"
+		    //    
+		    while ((valeurRecente > valeurActuelle || valeurRecente == valeurActuelle) && roues.isMoving()) {
+		        valeurActuelle = valeurRecente;
+		        valeurRecente = ultrasonic.distance();
+		        if (valeurActuelle - valeurRecente > 5) {
+		            roues.stop();
+		            if (valeurRecente < 65) {
+		                if (sens == 'd')
+		                    roues.tourner(12, false);
+		                else
+		                    roues.tourner(-12, false);
+		            }
+		            return true;
+		        }
+		        if (valeurRecente < valeurActuelle) {
+		            while ((valeurRecente < valeurActuelle || valeurRecente == valeurActuelle) && roues.isMoving()) {
+		                if (valeurActuelle - valeurRecente > 5) {
+		                    roues.stop();
+		                    if (valeurRecente < 65) {
+		                        if (sens == 'd')
+		                            roues.tourner(12, false);
+		                        else
+		                            roues.tourner(-12, false);
+		                    }
+		                    return true;
+		                }
+		                System.out.println("boucle2");
+		                valeurActuelle = valeurRecente;
+		                valeurRecente = ultrasonic.distance();
+		            }
+		        }
+		        Delay.msDelay(20);
+		    }
+		    return false;
 		}
-		return tab;
-	}
-
-
-
+	
+	
 
 	/*
 	 * Permet de faire un tour sur sot même en renvoyant un set de données.
 	 */
-	public static void tour(MoteurRoues roues, UltraSonicSensor ultrasonic) {
-		int [] t = tourSurSoitM(roues, ultrasonic);
-		for (int i = 0 ; i < t.length ; i++) {
-			System.out.print(t[i]+" ,");
+/*	public static void tour(MoteurRoues roues, UltraSonicSensor ultrasonic, TouchSensor touch) {
+		roues.setVitesse("tour");
+		roues.tourner(330, true);
+		int dist = (int) ultrasonic.distance();
+		Delay.msDelay(20);
+		while (dist-ultrasonic.distance()<dist*0.9  && dist!=MAX_DISTANCE && roues.isMoving()) {
+			boussolle += 1;
+			System.out.print("tjr pas, ");
+			Delay.msDelay(15);
+			dist = (int) ultrasonic.distance();
 		}
-
-		System.out.println("NB DE VALER" + t.length); 
-
-		System.out.println(ultrasonic.distance());
+		roues.stop();
+		System.out.println(boussolle);
+		//	roues.tourner(9.5, false);
+		roues.avancerT(3000);
+		while (ultrasonic.distance()>20 && !(touch.isPressed())) {
+			Delay.msDelay(20);
+		}
+		roues.stop();
 	}
-
+*/
 
 	/*public int premierPalet(int [] tab) {
 		for (int i = 1 ; i < tab.length-1 ; i++) {
@@ -139,12 +189,16 @@ public class Main {
 		TouchSensor touch = new TouchSensor(SensorPort.S1);
 		MoteurPinces pinces = new MoteurPinces();
 		MoteurRoues roues = new MoteurRoues("tour");
-		roues.avancerF(200);
+		Sound.beep();
+
+
+
 		boussolle = 0;
+		nb_palets = 9;
 		System.out.println("PRESS ENTER");
 		Button.ENTER.waitForPressAndRelease();
+		tour(roues,ultrasonic, touch);
 
-		tour(roues,ultrasonic);
 
 
 		/*

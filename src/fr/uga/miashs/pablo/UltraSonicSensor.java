@@ -20,5 +20,20 @@ public class UltraSonicSensor extends EV3UltrasonicSensor {
 		sp.fetchSample(trab, 0);
 		return trab[0] * 100;
 	}
+	
+	public boolean isRobot() {
+        spEcoute = this.getListenMode();
+        tEcoute = new float[spEcoute.sampleSize()];
+        spEcoute.fetchSample(tEcoute, 0);
+        if(tEcoute[0] == 1) {
+            sp = this.getDistanceMode();
+            trab = new float[sp.sampleSize()];
+            sp.fetchSample(trab, 0);
+            if(trab[0]*100 <= 25) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }

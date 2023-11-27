@@ -69,7 +69,7 @@ public class MoteurRoues {
 			pilot.setAngularAcceleration(400);
 			pilot.setAngularSpeed(280);
 		} else if (v.equals("tour")) {
-			pilot.setAngularSpeed(20);
+			pilot.setAngularSpeed(35);
 		}
 	}
 
@@ -110,6 +110,10 @@ public class MoteurRoues {
 
 	public void stop() {
 		pilot.stop();
+	}
+	
+	public boolean isMoving() {
+		return pilot.isMoving();
 	}
 
 
