@@ -60,8 +60,22 @@ public class TestNoGIT {
 			System.out.println("Tourne a gauche de 90 degres...");
 			moteurRoues.tourner(-80.5, false);
 		}
-		public void distancePalet(TouchSensor touchS, UltraSonicSensor uSS) {
-			System.out.println("Avance lentement de 10 cm...");
+		public void distancePalet( UltraSonicSensor uSS) {
+			//On place le palet a 50cm du robot
+			Button.ENTER.waitForPress();
+			System.out.println("La distance est de :" + uSS.distance());
+		}
+		public void touchSensor(TouchSensor touchS) {
+			Button.ENTER.waitForPress();
+			while(touchS.isPressed()==false) {
+				// tjrs pas pressé de 100ms
+				Delay.msDelay(100);
+				System.out.println("toujours pas pressé");
+			}
+			System.out.println("TouchSensor est bien pressé");
+			
+			
+
 			
 		}
 
