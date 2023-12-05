@@ -1,4 +1,4 @@
-##### Pablo | Initiation à l'intélligence artificielle
+### Pablo | Initiation à l'intélligence artificielle
 
 ### Description
 
