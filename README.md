@@ -1,8 +1,4 @@
-### Pablo | Initiation à l'intélligence artificielle
-
-[![Statut du build](lien-vers-votre-badge)](lien-vers-votre-build)
-[![Version du logiciel](lien-vers-votre-badge)](lien-vers-votre-version)
-[![Licence](lien-vers-votre-badge)](lien-vers-votre-licence)
+##### Pablo | Initiation à l'intélligence artificielle
 
 ### Description
 
