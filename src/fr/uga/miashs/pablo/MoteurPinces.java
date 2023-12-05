@@ -57,4 +57,9 @@ public class MoteurPinces {
         pinces.rotate(700, false);
         estOuvert = true;
     }
+    
+    public boolean getEstOuvert() {
+    	return estOuvert;
+    }
+    
 }
