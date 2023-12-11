@@ -96,7 +96,6 @@ public class Main {
 				// lacher le pallet , reculer et se tourner vers le mur le plus loin, avance jusq'uà dépasser la ligne blanche
 
 			case Pause:
-
 			case Fin:
 			}
 		}
