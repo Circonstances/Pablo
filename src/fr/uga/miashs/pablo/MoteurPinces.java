@@ -35,7 +35,10 @@ public class MoteurPinces {
     public void initialisation(int i) {
         pinces.rotate(i, false);
     }
-
+    
+    public boolean estOuvert() {
+    	return estOuvert(); 
+    }
     /**
      * Ferme les pinces.
      * 
